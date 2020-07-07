@@ -1,10 +1,13 @@
-import React from "react";
-import { Text } from "react-native";
+import 'react-native-gesture-handler';
+
+import React from 'react';
+import { StatusBar, View } from 'react-native';
 
 const App: React.FC = () => {
   return (
     <>
-      <Text>Hey Yeah</Text>
+      <StatusBar barStyle="light-content" backgroundColor="#312e38" />
+      <View style={{ flex: 1, backgroundColor: '#312e38' }} />
     </>
   );
 };
