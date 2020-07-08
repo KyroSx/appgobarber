@@ -1,5 +1,5 @@
 import React from 'react';
-import { Image } from 'react-native';
+import { Image, Text } from 'react-native';
 
 import Input from '../../components/Input';
 import Button from '../../components/Button';
@@ -18,7 +18,10 @@ const SignIn: React.FC = () => {
         <Input />
         <Input />
 
-        <Button />
+        <Button>Entrar</Button>
+
+        <Text>Esqueci minha senha</Text>
+        <Text> -- Criar conta </Text>
       </Container>
     </>
   );
