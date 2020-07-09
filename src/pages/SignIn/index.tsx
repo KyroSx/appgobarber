@@ -1,28 +1,63 @@
 import React from 'react';
-import { Image, Text } from 'react-native';
+import {
+  Image,
+  KeyboardAvoidingView,
+  Platform,
+  View,
+  Keyboard,
+} from 'react-native';
+import Icon from 'react-native-vector-icons/Feather';
 
+import { ScrollView } from 'react-native-gesture-handler';
 import Input from '../../components/Input';
 import Button from '../../components/Button';
 
 import logo from '../../assets/logo.png';
 
-import { Container, Title } from './styles';
+import {
+  Container,
+  Title,
+  ForgotPassword,
+  ForgotPasswordText,
+  CreateAccountButton,
+  CreateAccountText,
+} from './styles';
 
 const SignIn: React.FC = () => {
   return (
     <>
-      <Container>
-        <Image source={logo} />
-        <Title>Faça seu logon</Title>
+      <KeyboardAvoidingView
+        style={{ flex: 1 }}
+        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+        enabled
+      >
+        <ScrollView
+          keyboardShouldPersistTaps="handled"
+          contentContainerStyle={{ flex: 1 }}
+        >
+          <Container>
+            <Image source={logo} />
 
-        <Input name="email" icon="mail" placeholder="Email" />
-        <Input name="password" icon="lock" placeholder="Senha" />
+            <View>
+              <Title>Faça seu logon</Title>
+            </View>
 
-        <Button>Entrar</Button>
+            <Input name="email" icon="mail" placeholder="Email" />
+            <Input name="password" icon="lock" placeholder="Senha" />
 
-        <Text>Esqueci minha senha</Text>
-        <Text> -- Criar conta </Text>
-      </Container>
+            <Button>Entrar!</Button>
+
+            <ForgotPassword>
+              <ForgotPasswordText>Esqueci minha senha</ForgotPasswordText>
+            </ForgotPassword>
+          </Container>
+        </ScrollView>
+      </KeyboardAvoidingView>
+
+      <CreateAccountButton>
+        <Icon name="log-in" size={20} color="#ff9000" />
+        <CreateAccountText>Criar conta</CreateAccountText>
+      </CreateAccountButton>
     </>
   );
 };
