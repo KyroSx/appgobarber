@@ -14,6 +14,7 @@ import { ScrollView } from 'react-native-gesture-handler';
 import { useNavigation } from '@react-navigation/native';
 import { Form } from '@unform/mobile';
 import { FormHandles } from '@unform/core';
+import api from '../../service/api';
 import getValidationErrors from '../../utils/getValidationErrors';
 import Input from '../../components/Input';
 import Button from '../../components/Button';
@@ -40,27 +41,36 @@ const SignUp: React.FC = () => {
   const emailInputRef = useRef<TextInput>(null);
   const passwordInputRef = useRef<TextInput>(null);
 
-  const handleSubmit = useCallback(async (data: SingupFormData) => {
-    try {
-      formRef.current?.setErrors({});
+  const handleSubmit = useCallback(
+    async (data: SingupFormData) => {
+      try {
+        formRef.current?.setErrors({});
 
-      const schema = Yup.object().shape({
-        name: Yup.string().required('O Nome é obrigátorio'),
-        email: Yup.string()
-          .required('O email é obrigátorio')
-          .email('Digite um email valido'),
-        password: Yup.string().min(6, 'No minímo 6 digitos'),
-      });
-      await schema.validate(data, { abortEarly: false });
-    } catch (err) {
-      if (err instanceof Yup.ValidationError) {
-        const errors = getValidationErrors(err);
-        formRef.current?.setErrors(errors);
+        const schema = Yup.object().shape({
+          name: Yup.string().required('O Nome é obrigátorio'),
+          email: Yup.string()
+            .required('O email é obrigátorio')
+            .email('Digite um email valido'),
+          password: Yup.string().min(6, 'No minímo 6 digitos'),
+        });
+        await schema.validate(data, { abortEarly: false });
+
+        await api.post('users', data);
+
+        Alert.alert('Sucesso', 'Cadastro realizado com sucesso');
+
+        navigation.navigate('SignIn');
+      } catch (err) {
+        if (err instanceof Yup.ValidationError) {
+          const errors = getValidationErrors(err);
+          formRef.current?.setErrors(errors);
+        }
+
+        Alert.alert('Erro', 'Erro na autenticação');
       }
-
-      Alert.alert('Erro', 'Erro na autenticação');
-    }
-  }, []);
+    },
+    [navigation],
+  );
 
   return (
     <>
