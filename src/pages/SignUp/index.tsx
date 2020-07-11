@@ -1,17 +1,20 @@
-import React, { useRef } from 'react';
+import React, { useRef, useCallback } from 'react';
 import {
   Image,
   KeyboardAvoidingView,
   Platform,
   View,
   TextInput,
+  Alert,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Feather';
+import * as Yup from 'yup';
 
 import { ScrollView } from 'react-native-gesture-handler';
 import { useNavigation } from '@react-navigation/native';
 import { Form } from '@unform/mobile';
 import { FormHandles } from '@unform/core';
+import getValidationErrors from '../../utils/getValidationErrors';
 import Input from '../../components/Input';
 import Button from '../../components/Button';
 
@@ -24,12 +27,40 @@ import {
   BackToSignInText,
 } from './styles';
 
+interface SingupFormData {
+  name: string;
+  email: string;
+  password: string;
+}
+
 const SignUp: React.FC = () => {
   const navigation = useNavigation();
 
   const formRef = useRef<FormHandles>(null);
   const emailInputRef = useRef<TextInput>(null);
   const passwordInputRef = useRef<TextInput>(null);
+
+  const handleSubmit = useCallback(async (data: SingupFormData) => {
+    try {
+      formRef.current?.setErrors({});
+
+      const schema = Yup.object().shape({
+        name: Yup.string().required('O Nome é obrigátorio'),
+        email: Yup.string()
+          .required('O email é obrigátorio')
+          .email('Digite um email valido'),
+        password: Yup.string().min(6, 'No minímo 6 digitos'),
+      });
+      await schema.validate(data, { abortEarly: false });
+    } catch (err) {
+      if (err instanceof Yup.ValidationError) {
+        const errors = getValidationErrors(err);
+        formRef.current?.setErrors(errors);
+      }
+
+      Alert.alert('Erro', 'Erro na autenticação');
+    }
+  }, []);
 
   return (
     <>
@@ -49,7 +80,7 @@ const SignUp: React.FC = () => {
               <Title>Crie sua conta</Title>
             </View>
 
-            <Form ref={formRef} onSubmit={() => ({})}>
+            <Form ref={formRef} onSubmit={handleSubmit}>
               <Input
                 autoCapitalize="words"
                 name="name"
